@@ -370,11 +370,11 @@ a:active {text-decoration: none; color: white;}
   margin-bottom: 0 !important;
 }
 
-#container-apps{
+.cont-apps{
   list-style: none;
 }
 
-#container-apps>li {
+.cont-apps>li {
   width: 70px;
   height: 100px;
   margin: 0 5% 70px;
@@ -383,7 +383,7 @@ a:active {text-decoration: none; color: white;}
   transition: all 100ms ease-in-out;
 }
 
-#container-apps>li>a>img {
+.cont-apps>li>a>img {
   width: 100%;
   height: 70px;
   border-radius: 2px;
@@ -397,10 +397,6 @@ a:active {text-decoration: none; color: white;}
   visibility: visible;
   top:80px;
 }
-/* 
-#container-apps>li:hover {
-  height:160px;
-} */
 
 .hoverContainer{
   transition: all 100ms ease-in;
@@ -437,7 +433,7 @@ a:active {text-decoration: none; color: white;}
 
 .hover-properties{
   padding: 12px;
-  border-bottom: solid 1px #e2e2e2;
+  border-bottom: solid 1px a#e2e2e2;
 }
 
 .hover-properties li{

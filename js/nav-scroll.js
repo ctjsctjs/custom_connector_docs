@@ -13,9 +13,6 @@ $(function () {
     var $logo = $(".workato-logo");
 
     $nav.toggleClass("scrolled-nav", $(this).scrollTop() > $nav.height());
-	  // $bg.toggleClass("scrolled-bg", $(this).scrollTop() > $nav.height());
-    // $content.toggleClass("scrolled-content", $(this).scrollTop() > $nav.height());
-    // $logo.toggleClass("scrolled-logo", $(this).scrollTop() > $nav.height());
 
     if($nav.hasClass("scrolled-nav")){
       $bg.addClass("scrolled-bg");

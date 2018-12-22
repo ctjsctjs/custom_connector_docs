@@ -1,17 +1,16 @@
-//Global var
-var adapterCount = 0;
-var hiddenCount = 0;
-var json;
+//Declare Variables
 var filterList = {};
 var textFormat = {
   "api_type": "API Type",
   "auth_type": "Auth Type",
   "category": "Category"
 };
+
 //On Init
 $(document).ready(function () {
-  loadJSON();
-  generateAdapters();
+  $.getJSON( "json/adapters.json", function( data ) {
+      generateAdapters(data);
+  });
   filterHandler();
   clearSearch();
 });
@@ -25,7 +24,7 @@ function filterHandler() {
     var selected = $("." + filter + ".selected-input");
     var val = $(this).html();
     var currentFilter = {};
-    
+
     $("." + filter).removeClass("selected-input"); //Reset filter class to default style
     if ($(selected).html() == val) {
       filterList[filter] = ""; //Set filter to blank after deselecting
@@ -59,19 +58,6 @@ function filterHandler() {
       }
     });
     checkAllHidden();
-  });
-}
-
-//Load JSON
-function loadJSON() {
-  $.ajax({
-    'async': false,
-    'global': false,
-    'url': 'json/adapters.json',
-    'dataType': "json",
-    'success': function (data) {
-      json = data;
-    }
   });
 }
 
@@ -109,32 +95,30 @@ function checkAllHidden() {
 }
 
 //Load JSON file to generate app listing
-function generateAdapters() {
+function generateAdapters(json) {
 
-  generateCount = 0;
   var filters = {};
   var listCol = 5;
-  var ul = $('#container-apps');
+
+  var mvp = $("#apps-mvp");
+  var beta = $("#apps-beta");
+  var thirdParty = $("#apps-third-party");
 
   //Generate app list from adapters.JSON
   $.each(json, (function (object) {
-
-    //Count adapter for no result function
-    adapterCount += 1;
-
     var link = json[object].link;
     var git = json[object].github_link;
     var img = json[object].image;
     var name = json[object].name;
     var properties = json[object].properties;
+    var section = json[object].section;
 
-    var li = $("<li>").attr({ "class": "app" }).appendTo(ul);
-    var a = $("<a>").attr({
-      "href": "javascript:void(0);",
-      "target": "_blank",
-      "class": "app-link",
-    }).appendTo(li);
+    var iconAttr = {"href": "javascript:void(0);", "class": "app-link",};
+    var pageLinkAttr = {"href": link, "target": "_blank", "class": "app-link"};
+    var gitLinkAttr = {"href": git, "target": "_blank", "class": "app-link"};
 
+    var li = $("<li>").attr({ "class": "app" });
+    var a = $("<a>").attr(iconAttr).appendTo(li);
     var image = $("<img>").attr("src", img).appendTo(a);
     var label = $("<div>").attr("class", "item-name black-font").html(name).appendTo(a);
     var hoverContainer = $("<div>").attr("class", "hoverContainer").appendTo(li);
@@ -142,9 +126,19 @@ function generateAdapters() {
     var hoverProperties = $("<ul>").attr("class", "hover-properties").appendTo(hoverContainer);
     var hoverUL = $("<ul>").appendTo(hoverContainer);
     var hoverPageLi = $("<li>").attr("class", name).appendTo(hoverUL);
-    var hoverPageA = $("<a>").attr({ "href": link, "target": "_blank", "class": "app-link" }).html("Install Connector").appendTo(hoverPageLi);
+    var hoverPageA = $("<a>").attr(pageLinkAttr).html("Install Connector").appendTo(hoverPageLi);
     var hoverGitLi = $("<li>").appendTo(hoverUL);
-    var hoverGitA = $("<a>").attr({ "href": git, "target": "_blank", "class": "app-link" }).html("View Source Code").appendTo(hoverGitLi);
+    var hoverGitA = $("<a>").attr(gitLinkAttr).html("View Source Code").appendTo(hoverGitLi);
+
+    if(section=="mvp"){
+      $(li).appendTo(mvp);
+
+    } else if (section=="beta"){
+      $(li).appendTo(beta);
+
+    } else if (section=="thirdParty"){ 
+      $(li).appendTo(thirdParty);
+    }
 
     //Load filter options
     $.each(properties, function (i, item) {
@@ -162,8 +156,11 @@ function generateAdapters() {
 
   //Generate dummy box for responsive
   for (var i = 0; i < (listCol); i++) {
-    $('<li class="item flex-dummy"></li>').appendTo(ul);
+    $('<li class="item flex-dummy"></li>').appendTo(mvp);
+    $('<li class="item flex-dummy"></li>').appendTo(beta);
+    $('<li class="item flex-dummy"></li>').appendTo(thirdParty);
   }
+
   generateFilters(filters);
 }
 
@@ -174,15 +171,9 @@ function generateFilters(filters) {
     var div = $("<div>").attr("class", "filter-section ").appendTo(container);
     var title = $("<h5>").html(textFormat[i]).appendTo(div);
     var ul = $("<ul>").appendTo(div);
-    
+
     $.each(item, function (k, value) {
       var li = $("<li>").appendTo(ul);
-      // var radioButtons = $("<input>").attr({
-      //   "class": "filter-input",
-      //   "type": "radio",
-      //   "value": value,
-      //   "name": i
-      // }).appendTo(li);
       var label = $("<span>").attr("class", "filter-input " + i).html(value).appendTo(li);
     });
     isFirstInput = true;
